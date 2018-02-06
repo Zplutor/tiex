@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="test">
+      <UniqueIdentifier>{607b15aa-3fae-4c87-b26a-24687bee1f0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{b041f666-be4d-42b3-92c7-b3c1b5033e7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\googletest">
+      <UniqueIdentifier>{7854697c-5c58-4fe5-ae4d-d178f73de986}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\googletest\src">
+      <UniqueIdentifier>{626b15e5-25fe-477e-8552-d33c25fc2d31}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\tiex_parser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tiex_generate.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tiex_formatter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tiex_match.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tiex_scanner.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\parser_test.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\generate_test.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\match_test.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\scanner_test.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\googletest\src\gtest-all.cc">
+      <Filter>test\googletest\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\googletest\src\gtest_main.cc">
+      <Filter>test\googletest\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\case_test.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\tiex_generate.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_time.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_match.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_error.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_scanner.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_expression.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_parser.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_config.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_formatter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\test_utility.h">
+      <Filter>test</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
