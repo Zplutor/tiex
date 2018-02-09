@@ -20,15 +20,15 @@ tiex::Formatter formatter = tiex::Formatter::Create(expression);
 
 There are three rules in this expression. Each rule has a condition represented by a pair of brackets and a result represented by a pair of braces. Explaination of these rules:
 
-1. If formatted time is earlier than referenced time in one minute, then output “Just now”.
-2. If formatted time is earlier than referenced time in one hour, then output with format “HH:MM:SS”.
-3. If formatted time is earlier than referenced time from the first previous day to the second previous day, then output “N hours”, which “N” is the number of hours between formatted time and referenced time.
+1. If formatted time is earlier than referenced time in one minute, then output "Just now".
+2. If formatted time is earlier than referenced time in one hour, then output with format "HH:MM:SS".
+3. If formatted time is earlier than referenced time from the first previous day to the second previous day, then output "N hours", which "N" is the number of hours between formatted time and referenced time.
 
 Next, we can format times with this formatter. The formatter would examines every rule until a matched rule is found. As the code shows below:
 ```cpp
 std::time_t referenced_time = 1518070016;  //2018-02-08 14:06:56
 
-std::time_t target_time = 1518069960;  //2018-02-08 14:06:0
+std::time_t target_time = 1518069960;  //2018-02-08 14:06:00
 std::cout << formatter.Format(referenced_time, target_time) << std::endl;  //Output: Just now
 
 target_time = 1518066451;  //2018-02-08 13:07:31
@@ -39,4 +39,4 @@ std::cout << formatter.Format(referenced_time, target_time) << std::endl;  //Out
 ```
 
 ## More Information
-The documentation about the detail usage of tiex and the syntax of expression and is coming soon.
+The documentation about the detail usage of tiex and the syntax of expression is coming soon.
