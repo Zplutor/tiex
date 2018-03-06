@@ -39,4 +39,4 @@ std::cout << formatter.Format(referenced_time, target_time) << std::endl;  //Out
 ```
 
 ## More Information
-The documentation about the detail usage of tiex and the syntax of expression is coming soon.
+* [Syntax](https://github.com/Zplutor/tiex/wiki/Syntax) of the expression.
