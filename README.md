@@ -40,3 +40,4 @@ std::cout << formatter.Format(referenced_time, target_time) << std::endl;  //Out
 
 ## More Information
 * [Syntax](https://github.com/Zplutor/tiex/wiki/Syntax) of the expression.
+* The choice between [Char and Wide Char](https://github.com/Zplutor/tiex/wiki/Char-and-Wide-Char).
