@@ -33,6 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2314508E2059378A00A05CD3 /* tiex_locale.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tiex_locale.h; path = ../src/tiex_locale.h; sourceTree = "<group>"; };
 		B73876FF200F11DE003A22B5 /* tiex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tiex.h; path = ../src/tiex.h; sourceTree = "<group>"; };
 		B7387703200F121C003A22B5 /* scanner_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scanner_test.cpp; path = ../test/scanner_test.cpp; sourceTree = "<group>"; };
 		B738770A200F126F003A22B5 /* gtest_main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gtest_main.cc; path = ../test/googletest/src/gtest_main.cc; sourceTree = "<group>"; };
@@ -76,6 +77,7 @@
 				B7387720200F1AFE003A22B5 /* tiex_config.h */,
 				B7387721200F1B7F003A22B5 /* tiex_expression.h */,
 				B7387728200F1ED4003A22B5 /* tiex_error.h */,
+				2314508E2059378A00A05CD3 /* tiex_locale.h */,
 				B7387722200F1BEF003A22B5 /* tiex_formatter.h */,
 				B7387723200F1C3A003A22B5 /* tiex_formatter.cpp */,
 				B738771D200F1727003A22B5 /* tiex_scanner.h */,

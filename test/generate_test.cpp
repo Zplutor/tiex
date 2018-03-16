@@ -215,3 +215,156 @@ TEST(Generate, GetDifferenceWithTm_Year) {
     ASSERT_TRUE(test(referenced_tm, MakeTm(2017, 12, 31, 23, 59, 59), 0));
     ASSERT_TRUE(test(referenced_tm, MakeTm(2018, 1,  1,  0,  0,  0), 0));
 }
+
+
+TEST(Generate, GetLocaleText_AmPm) {
+    
+    auto test = [](int hour, bool expected_pm) {
+        
+        Locale locale;
+        locale.get_am_pm = [](bool is_pm) {
+            return is_pm ? TIEX_STRING("late") : TIEX_STRING("early");
+        };
+        
+        auto tm = MakeTm(2018, 3, 16, hour, 10, 13);
+        String locale_text;
+        bool has_got = GetLocaleText('p', tm, locale, locale_text);
+        if (! has_got) {
+            return false;
+        }
+        
+        if (expected_pm) {
+            return locale_text == TIEX_STRING("late");
+        }
+        else {
+            return locale_text == TIEX_STRING("early");
+        }
+    };
+    
+    ASSERT_TRUE(test(0, false));
+    ASSERT_TRUE(test(1, false));
+    ASSERT_TRUE(test(2, false));
+    ASSERT_TRUE(test(3, false));
+    ASSERT_TRUE(test(4, false));
+    ASSERT_TRUE(test(5, false));
+    ASSERT_TRUE(test(6, false));
+    ASSERT_TRUE(test(7, false));
+    ASSERT_TRUE(test(8, false));
+    ASSERT_TRUE(test(9, false));
+    ASSERT_TRUE(test(10, false));
+    ASSERT_TRUE(test(11, false));
+    ASSERT_TRUE(test(12, true));
+    ASSERT_TRUE(test(13, true));
+    ASSERT_TRUE(test(14, true));
+    ASSERT_TRUE(test(15, true));
+    ASSERT_TRUE(test(16, true));
+    ASSERT_TRUE(test(17, true));
+    ASSERT_TRUE(test(18, true));
+    ASSERT_TRUE(test(19, true));
+    ASSERT_TRUE(test(20, true));
+    ASSERT_TRUE(test(21, true));
+    ASSERT_TRUE(test(22, true));
+    ASSERT_TRUE(test(23, true));
+}
+
+
+TEST(Generate, GetLocaleText_AmPmWithoutLocale) {
+    
+    auto tm = MakeTm(2018, 3, 16, 13, 20, 13);
+    String locale_text;
+    bool has_got = GetLocaleText('p', tm, Locale(), locale_text);
+    ASSERT_FALSE(has_got);
+    ASSERT_EQ(locale_text, String());
+}
+
+
+TEST(Generate, GetLocaleText_Weekday) {
+    
+    std::map<int, std::pair<String, String>> weekday_map = {
+        { 0, { TIEX_STRING("日"), TIEX_STRING("周日") } },
+        { 1, { TIEX_STRING("一"), TIEX_STRING("周一") } },
+        { 2, { TIEX_STRING("二"), TIEX_STRING("周二") } },
+        { 3, { TIEX_STRING("三"), TIEX_STRING("周三") } },
+        { 4, { TIEX_STRING("四"), TIEX_STRING("周四") } },
+        { 5, { TIEX_STRING("五"), TIEX_STRING("周五") } },
+        { 6, { TIEX_STRING("六"), TIEX_STRING("周六") } },
+    };
+    
+    auto test = [&weekday_map](int weekday, bool abbreviated, const String& expected_text) {
+        
+        Locale locale;
+        locale.get_weekday = [&weekday_map](int weekday, bool abbreviated) {
+            const auto& pair = weekday_map[weekday];
+            return abbreviated ? pair.first : pair.second;
+        };
+        
+        auto tm = MakeTm(2018, 3, 18 + weekday, 13, 27, 28);
+        String locale_text;
+        bool has_got = GetLocaleText(abbreviated ? 'a' : 'A', tm, locale, locale_text);
+        if (! has_got) {
+            return false;
+        }
+        
+        return locale_text == expected_text;
+    };
+    
+    ASSERT_TRUE(test(0, true, TIEX_STRING("日")));
+    ASSERT_TRUE(test(1, true, TIEX_STRING("一")));
+    ASSERT_TRUE(test(2, true, TIEX_STRING("二")));
+    ASSERT_TRUE(test(3, true, TIEX_STRING("三")));
+    ASSERT_TRUE(test(4, true, TIEX_STRING("四")));
+    ASSERT_TRUE(test(5, true, TIEX_STRING("五")));
+    ASSERT_TRUE(test(6, true, TIEX_STRING("六")));
+    ASSERT_TRUE(test(0, false, TIEX_STRING("周日")));
+    ASSERT_TRUE(test(1, false, TIEX_STRING("周一")));
+    ASSERT_TRUE(test(2, false, TIEX_STRING("周二")));
+    ASSERT_TRUE(test(3, false, TIEX_STRING("周三")));
+    ASSERT_TRUE(test(4, false, TIEX_STRING("周四")));
+    ASSERT_TRUE(test(5, false, TIEX_STRING("周五")));
+    ASSERT_TRUE(test(6, false, TIEX_STRING("周六")));
+}
+
+
+TEST(Generate, GetLocaleText_WeekdayWithoutLocale) {
+    
+    auto test = [](bool abbreviated) {
+        
+        auto tm = MakeTm(2018, 3, 16, 13, 38, 32);
+        String locale_text;
+        bool has_got = GetLocaleText(abbreviated ? 'a' : 'A', tm, Locale(), locale_text);
+        if (has_got) {
+            return false;
+        }
+        return locale_text.empty();
+    };
+    
+    ASSERT_TRUE(test(true));
+    ASSERT_TRUE(test(false));
+}
+
+
+TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
+    
+    auto test = [](Char specifier_char) {
+        
+        Locale locale;
+        locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
+        locale.get_weekday = [](int weekday, bool abbreviated) { return TIEX_STRING("weekday"); };
+        
+        auto tm = MakeTm(2018, 3, 16, 13, 40, 22);
+        String locale_text;
+        bool has_got = GetLocaleText(specifier_char, tm, locale, locale_text);
+        if (has_got) {
+            return false;
+        }
+        return locale_text.empty();
+    };
+    
+    std::set<Char> supported_chars = { 'p', 'a', 'A' };
+    
+    for (int ch = std::numeric_limits<Char>::min(); ch <= std::numeric_limits<Char>::max(); ++ch) {
+        if (supported_chars.find(static_cast<Char>(ch)) == supported_chars.end()) {
+            ASSERT_TRUE(test(static_cast<Char>(ch)));
+        }
+    }
+}

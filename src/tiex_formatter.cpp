@@ -43,19 +43,19 @@ Formatter::Formatter(Expression&& expression) : expression_(std::forward<Express
     
 }
 
-
-String Formatter::Format(std::time_t referenced_time, std::time_t formatted_time) {
+    
+String Formatter::Format(std::time_t referenced_time, std::time_t formatted_time, const Locale& locale) {
     
     FormatError format_error;
-    auto string = Format(referenced_time, formatted_time, format_error);
+    auto string = Format(referenced_time, formatted_time, locale, format_error);
     
     assert(format_error.status == FormatError::Status::None);
     
     return string;
 }
+    
 
-
-String Formatter::Format(std::time_t referenced_time, std::time_t formatted_time, FormatError& format_error) {
+String Formatter::Format(std::time_t referenced_time, std::time_t formatted_time, const Locale& locale, FormatError& format_error) {
     
     if (expression_.rules.empty()) {
         format_error.status = FormatError::Status::NoMatchedRule;
@@ -77,7 +77,7 @@ String Formatter::Format(std::time_t referenced_time, std::time_t formatted_time
         if (is_matched) {
             
             String result_text;
-            bool is_succeeded = GenerateResultText(each_rule.result, referenced, formatted, result_text);
+            bool is_succeeded = GenerateResultText(each_rule.result, referenced, formatted, locale, result_text);
             if (! is_succeeded) {
                 format_error.status = FormatError::Status::TimeError;
                 return String();

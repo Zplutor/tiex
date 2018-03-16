@@ -3,15 +3,50 @@
 #include <iomanip>
 #include <sstream>
 
-namespace tiex {
-namespace internal {
-
 #if TIEX_USE_WCHAR
     #define ToString std::to_wstring
 #else
     #define ToString std::to_string
 #endif
+
+namespace tiex {
+namespace internal {
+namespace {
     
+bool OverrideStandardSpecifiers(const std::tm& formatted_tm, const Locale& locale, String& result_text) {
+    
+    if ((locale.get_weekday == nullptr) && (locale.get_am_pm == nullptr)) {
+        return false;
+    }
+    
+    bool has_overridden_all = true;
+    
+    std::size_t index = 0;
+    while (index < result_text.length() - 1) {
+        
+        if (result_text[index] != '%') {
+            ++index;
+            continue;
+        }
+        
+        Char next_char = result_text[index + 1];
+        String override_text;
+        bool has_got = GetLocaleText(next_char, formatted_tm, locale, override_text);
+        if (! has_got) {
+            
+            has_overridden_all = false;
+            index += 2;
+            continue;
+        }
+        
+        result_text.replace(index, 2, override_text);
+        index += override_text.length();
+    }
+    
+    return has_overridden_all;
+}
+    
+}
 
 long GetDifferenceWithTimet(const Specifier& specifier, std::time_t referenced_time, std::time_t formatted_time) {
     
@@ -142,29 +177,36 @@ bool GetTimeDifference(
             return true;
     }
 }
-    
-    
-bool GenerateTextWithSpecifier(
-    const Specifier& specifier,
-    const Time& reference_time,
-    const Time& formatted_time,
-    String& text) {
 
-    long difference = 0;
-    bool is_succeeded = GetTimeDifference(specifier, reference_time, formatted_time, difference);
-    if (! is_succeeded) {
-        return false;
+    
+bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Locale& locale, String& locale_text) {
+    
+    if (specifier_char == 'p') {
+        if (locale.get_am_pm != nullptr) {
+            
+            bool is_pm = formatted_tm.tm_hour >= 12;
+            locale_text = locale.get_am_pm(is_pm);
+            return true;
+        }
+    }
+    else if ((specifier_char == 'a') || (specifier_char == 'A')) {
+        if (locale.get_weekday != nullptr) {
+            
+            bool abbreviated = specifier_char == 'a';
+            locale_text = locale.get_weekday(formatted_tm.tm_wday, abbreviated);
+            return true;
+        }
     }
     
-    text = ToString(std::abs(difference));
-    return true;
+    return false;
 }
-
+    
     
 bool GenerateResultText(
     const Result& result,
     const Time& reference_time,
     const Time& formatted_time,
+    const Locale& locale,
     String& text) {
     
     String result_text;
@@ -198,9 +240,13 @@ bool GenerateResultText(
             return false;
         }
         
-        std::basic_ostringstream<Char> stream;
-        stream << std::put_time(formatted_tm, result_text.c_str());
-        result_text = stream.str();
+        bool has_overridden_all = OverrideStandardSpecifiers(*formatted_tm, locale, result_text);
+        if (! has_overridden_all) {
+            
+            std::basic_ostringstream<Char> stream;
+            stream << std::put_time(formatted_tm, result_text.c_str());
+            result_text = stream.str();
+        }
     }
     
     text = result_text;
