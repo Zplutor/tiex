@@ -11,43 +11,7 @@
 
 namespace tiex {
 namespace internal {
-namespace {
     
-bool OverrideStandardSpecifiers(const std::tm& formatted_tm, const Locale& locale, String& result_text) {
-    
-    if ((locale.get_weekday == nullptr) && (locale.get_am_pm == nullptr)) {
-        return false;
-    }
-    
-    bool has_overridden_all = true;
-    
-    std::size_t index = 0;
-    while (index < result_text.length() - 1) {
-        
-        if (result_text[index] != '%') {
-            ++index;
-            continue;
-        }
-        
-        Char next_char = result_text[index + 1];
-        String override_text;
-        bool has_got = GetLocaleText(next_char, formatted_tm, locale, override_text);
-        if (! has_got) {
-            
-            has_overridden_all = false;
-            index += 2;
-            continue;
-        }
-        
-        result_text.replace(index, 2, override_text);
-        index += override_text.length();
-    }
-    
-    return has_overridden_all;
-}
-    
-}
-
 long GetDifferenceWithTimet(const Specifier& specifier, std::time_t referenced_time, std::time_t formatted_time) {
     
     long difference = static_cast<long>(formatted_time - referenced_time);
@@ -199,6 +163,42 @@ bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Local
     }
     
     return false;
+}
+    
+    
+bool OverrideStandardSpecifiers(const std::tm& formatted_tm, const Locale& locale, String& result_text) {
+    
+    if ((locale.get_weekday == nullptr) && (locale.get_am_pm == nullptr)) {
+        return false;
+    }
+    
+    bool has_overridden_all = true;
+    
+    std::size_t index = 0;
+    while (index < result_text.length() - 1) {
+        
+        if (result_text[index] != '%') {
+            ++index;
+            continue;
+        }
+        
+        Char next_char = result_text[index + 1];
+        String override_text;
+        bool has_got = GetLocaleText(next_char, formatted_tm, locale, override_text);
+        if (! has_got) {
+            
+            if (next_char != '%') {
+                has_overridden_all = false;
+            }
+            index += 2;
+            continue;
+        }
+        
+        result_text.replace(index, 2, override_text);
+        index += override_text.length();
+    }
+    
+    return has_overridden_all;
 }
     
     

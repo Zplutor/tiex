@@ -368,3 +368,60 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
         }
     }
 }
+
+
+TEST(Generate, OverrideStandardSpecifiers_Normal) {
+        
+    auto tm = MakeTm(2018, 3, 18, 22, 23, 49);
+    
+    Locale locale;
+    locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
+    locale.get_weekday = [](int weekday, bool abbreviated) { return TIEX_STRING("weekday"); };
+    
+    auto result_text = TIEX_STRING("Override locale %A %a%p ");
+    bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
+    ASSERT_TRUE(overrode_all);
+    ASSERT_EQ(result_text, TIEX_STRING("Override locale weekday weekdayampm "));
+    
+    result_text = TIEX_STRING("Override %H locale %A%a%p ");
+    overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
+    ASSERT_FALSE(overrode_all);
+    ASSERT_EQ(result_text, TIEX_STRING("Override %H locale weekdayweekdayampm "));
+}
+
+
+TEST(Generate, OverrideStandardSpecifiers_EscapePercent) {
+    
+    auto tm = MakeTm(2018, 3, 18, 22, 30, 1);
+    
+    Locale locale;
+    locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
+    locale.get_weekday = [](int weekday, bool abbreviated) { return TIEX_STRING("weekday"); };
+    
+    auto result_text = TIEX_STRING("Escape%% %%p %%M %a");
+    bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
+    ASSERT_TRUE(overrode_all);
+    ASSERT_EQ(result_text, TIEX_STRING("Escape%% %%p %%M weekday"));
+}
+
+
+TEST(Generate, OverrideStandardSpecifiers_NoLocale) {
+    
+    auto tm = MakeTm(2018, 3, 18, 21, 58, 44);
+    auto result_text = TIEX_STRING("%p %a %A");
+    bool overrode_all = OverrideStandardSpecifiers(tm, Locale(), result_text);
+    ASSERT_FALSE(overrode_all);
+    ASSERT_EQ(result_text, TIEX_STRING("%p %a %A"));
+}
+
+
+TEST(Generate, OverrideStandardSpecifiers_PercentAtTail) {
+    
+    auto tm = MakeTm(2018, 3, 18, 22, 20, 0);
+    Locale locale;
+    locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
+    auto result_text = TIEX_STRING("Result text %");
+    bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
+    ASSERT_TRUE(overrode_all);
+    ASSERT_EQ(result_text, TIEX_STRING("Result text %"));
+}

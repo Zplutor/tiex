@@ -12,6 +12,7 @@ long GetDifferenceWithTimet(const Specifier& specifier, std::time_t referenced_t
 long GetDifferenceWithTm(const Specifier& specifier, const std::tm& referenced_tm, const std::tm& formatted_tm);
     
 bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Locale& locale, String& locale_text);
+bool OverrideStandardSpecifiers(const std::tm& formatted_tm, const Locale& locale, String& result_text);
     
 bool GenerateResultText(
     const Result& result,
