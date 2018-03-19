@@ -86,5 +86,8 @@
     <ClInclude Include="..\test\test_utility.h">
       <Filter>test</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\tiex_locale.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

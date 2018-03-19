@@ -281,13 +281,13 @@ TEST(Generate, GetLocaleText_AmPmWithoutLocale) {
 TEST(Generate, GetLocaleText_Weekday) {
     
     std::map<int, std::pair<String, String>> weekday_map = {
-        { 0, { TIEX_STRING("日"), TIEX_STRING("周日") } },
-        { 1, { TIEX_STRING("一"), TIEX_STRING("周一") } },
-        { 2, { TIEX_STRING("二"), TIEX_STRING("周二") } },
-        { 3, { TIEX_STRING("三"), TIEX_STRING("周三") } },
-        { 4, { TIEX_STRING("四"), TIEX_STRING("周四") } },
-        { 5, { TIEX_STRING("五"), TIEX_STRING("周五") } },
-        { 6, { TIEX_STRING("六"), TIEX_STRING("周六") } },
+        { 0, { TIEX_STRING("zero"), TIEX_STRING("ZERO") } },
+        { 1, { TIEX_STRING("one"), TIEX_STRING("ONE") } },
+        { 2, { TIEX_STRING("two"), TIEX_STRING("TWO") } },
+        { 3, { TIEX_STRING("three"), TIEX_STRING("THREE") } },
+        { 4, { TIEX_STRING("four"), TIEX_STRING("FOUR") } },
+        { 5, { TIEX_STRING("five"), TIEX_STRING("FIVE") } },
+        { 6, { TIEX_STRING("six"), TIEX_STRING("SIX") } },
     };
     
     auto test = [&weekday_map](int weekday, bool abbreviated, const String& expected_text) {
@@ -308,20 +308,20 @@ TEST(Generate, GetLocaleText_Weekday) {
         return locale_text == expected_text;
     };
     
-    ASSERT_TRUE(test(0, true, TIEX_STRING("日")));
-    ASSERT_TRUE(test(1, true, TIEX_STRING("一")));
-    ASSERT_TRUE(test(2, true, TIEX_STRING("二")));
-    ASSERT_TRUE(test(3, true, TIEX_STRING("三")));
-    ASSERT_TRUE(test(4, true, TIEX_STRING("四")));
-    ASSERT_TRUE(test(5, true, TIEX_STRING("五")));
-    ASSERT_TRUE(test(6, true, TIEX_STRING("六")));
-    ASSERT_TRUE(test(0, false, TIEX_STRING("周日")));
-    ASSERT_TRUE(test(1, false, TIEX_STRING("周一")));
-    ASSERT_TRUE(test(2, false, TIEX_STRING("周二")));
-    ASSERT_TRUE(test(3, false, TIEX_STRING("周三")));
-    ASSERT_TRUE(test(4, false, TIEX_STRING("周四")));
-    ASSERT_TRUE(test(5, false, TIEX_STRING("周五")));
-    ASSERT_TRUE(test(6, false, TIEX_STRING("周六")));
+    ASSERT_TRUE(test(0, true, TIEX_STRING("zero")));
+    ASSERT_TRUE(test(1, true, TIEX_STRING("one")));
+    ASSERT_TRUE(test(2, true, TIEX_STRING("two")));
+    ASSERT_TRUE(test(3, true, TIEX_STRING("three")));
+    ASSERT_TRUE(test(4, true, TIEX_STRING("four")));
+    ASSERT_TRUE(test(5, true, TIEX_STRING("five")));
+    ASSERT_TRUE(test(6, true, TIEX_STRING("six")));
+    ASSERT_TRUE(test(0, false, TIEX_STRING("ZERO")));
+    ASSERT_TRUE(test(1, false, TIEX_STRING("ONE")));
+    ASSERT_TRUE(test(2, false, TIEX_STRING("TWO")));
+    ASSERT_TRUE(test(3, false, TIEX_STRING("THREE")));
+    ASSERT_TRUE(test(4, false, TIEX_STRING("FOUR")));
+    ASSERT_TRUE(test(5, false, TIEX_STRING("FIVE")));
+    ASSERT_TRUE(test(6, false, TIEX_STRING("SIX")));
 }
 
 

@@ -98,6 +98,7 @@
     <ClInclude Include="..\src\tiex_expression.h" />
     <ClInclude Include="..\src\tiex_formatter.h" />
     <ClInclude Include="..\src\tiex_generate.h" />
+    <ClInclude Include="..\src\tiex_locale.h" />
     <ClInclude Include="..\src\tiex_match.h" />
     <ClInclude Include="..\src\tiex_parser.h" />
     <ClInclude Include="..\src\tiex_scanner.h" />
