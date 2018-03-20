@@ -440,6 +440,7 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
         Locale locale;
         locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
         locale.get_weekday = [](int weekday, bool abbreviated) { return TIEX_STRING("weekday"); };
+        locale.get_month = [](int month, bool abbreviated) { return TIEX_STRING("month"); };
         
         auto tm = MakeTm(2018, 3, 16, 13, 40, 22);
         String locale_text;
@@ -450,7 +451,7 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
         return locale_text.empty();
     };
     
-    std::set<Char> supported_chars = { 'p', 'a', 'A' };
+    std::set<Char> supported_chars = { 'p', 'a', 'A', 'b', 'h', 'B' };
     
     for (int ch = std::numeric_limits<Char>::min(); ch <= std::numeric_limits<Char>::max(); ++ch) {
         if (supported_chars.find(static_cast<Char>(ch)) == supported_chars.end()) {
