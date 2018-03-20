@@ -161,6 +161,14 @@ bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Local
             return true;
         }
     }
+    else if ((specifier_char == 'b') || (specifier_char == 'h') || (specifier_char == 'B')) {
+        if (locale.get_month != nullptr) {
+            
+            bool abbreviated = specifier_char != 'B';
+            locale_text = locale.get_month(formatted_tm.tm_mon + 1, abbreviated);
+            return true;
+        }
+    }
     
     return false;
 }

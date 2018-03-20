@@ -343,6 +343,96 @@ TEST(Generate, GetLocaleText_WeekdayWithoutLocale) {
 }
 
 
+TEST(Generate, GetLocaleText_Month) {
+    
+    std::map<int, std::pair<String, String>> month_map = {
+        { 1, { TIEX_STRING("one"), TIEX_STRING("ONE") } },
+        { 2, { TIEX_STRING("two"), TIEX_STRING("TWO") } },
+        { 3, { TIEX_STRING("three"), TIEX_STRING("THREE") } },
+        { 4, { TIEX_STRING("four"), TIEX_STRING("FOUR") } },
+        { 5, { TIEX_STRING("five"), TIEX_STRING("FIVE") } },
+        { 6, { TIEX_STRING("six"), TIEX_STRING("SIX") } },
+        { 7, { TIEX_STRING("seven"), TIEX_STRING("SEVEN") } },
+        { 8, { TIEX_STRING("eight"), TIEX_STRING("EIGHT") } },
+        { 9, { TIEX_STRING("nine"), TIEX_STRING("NINE") } },
+        { 10, { TIEX_STRING("ten"), TIEX_STRING("TEN") } },
+        { 11, { TIEX_STRING("eleven"), TIEX_STRING("ELEVEN") } },
+        { 12, { TIEX_STRING("twelve"), TIEX_STRING("TWELVE") } },
+    };
+    
+    auto test = [&month_map](int month, const std::vector<Char> specifier_chars, const String& expected_text) {
+        
+        Locale locale;
+        locale.get_month = [&month_map](int month, bool abbreviated) {
+            const auto& pair = month_map[month];
+            return abbreviated ? pair.first : pair.second;
+        };
+        
+        auto tm = MakeTm(2018, month, 20, 18, 39, 8);
+        
+        for (auto each_char : specifier_chars) {
+        
+            String locale_text;
+            bool has_got = GetLocaleText(each_char, tm, locale, locale_text);
+            if (! has_got) {
+                return false;
+            }
+            
+            if (locale_text != expected_text) {
+                return false;
+            }
+        }
+        
+        return true;
+    };
+    
+    ASSERT_TRUE(test(1, { 'b', 'h' }, TIEX_STRING("one")));
+    ASSERT_TRUE(test(2, { 'b', 'h' }, TIEX_STRING("two")));
+    ASSERT_TRUE(test(3, { 'b', 'h' }, TIEX_STRING("three")));
+    ASSERT_TRUE(test(4, { 'b', 'h' }, TIEX_STRING("four")));
+    ASSERT_TRUE(test(5, { 'b', 'h' }, TIEX_STRING("five")));
+    ASSERT_TRUE(test(6, { 'b', 'h' }, TIEX_STRING("six")));
+    ASSERT_TRUE(test(7, { 'b', 'h' }, TIEX_STRING("seven")));
+    ASSERT_TRUE(test(8, { 'b', 'h' }, TIEX_STRING("eight")));
+    ASSERT_TRUE(test(9, { 'b', 'h' }, TIEX_STRING("nine")));
+    ASSERT_TRUE(test(10, { 'b', 'h' }, TIEX_STRING("ten")));
+    ASSERT_TRUE(test(11, { 'b', 'h' }, TIEX_STRING("eleven")));
+    ASSERT_TRUE(test(12, { 'b', 'h' }, TIEX_STRING("twelve")));
+    
+    ASSERT_TRUE(test(1, { 'B' }, TIEX_STRING("ONE")));
+    ASSERT_TRUE(test(2, { 'B' }, TIEX_STRING("TWO")));
+    ASSERT_TRUE(test(3, { 'B' }, TIEX_STRING("THREE")));
+    ASSERT_TRUE(test(4, { 'B' }, TIEX_STRING("FOUR")));
+    ASSERT_TRUE(test(5, { 'B' }, TIEX_STRING("FIVE")));
+    ASSERT_TRUE(test(6, { 'B' }, TIEX_STRING("SIX")));
+    ASSERT_TRUE(test(7, { 'B' }, TIEX_STRING("SEVEN")));
+    ASSERT_TRUE(test(8, { 'B' }, TIEX_STRING("EIGHT")));
+    ASSERT_TRUE(test(9, { 'B' }, TIEX_STRING("NINE")));
+    ASSERT_TRUE(test(10, { 'B' }, TIEX_STRING("TEN")));
+    ASSERT_TRUE(test(11, { 'B' }, TIEX_STRING("ELEVEN")));
+    ASSERT_TRUE(test(12, { 'B' }, TIEX_STRING("TWELVE")));
+}
+
+
+TEST(Generate, GetLocaleText_MonthWithoutLocale) {
+    
+    auto test = [](Char specifier_char) {
+        
+        auto tm = MakeTm(2018, 3, 20, 18, 46, 21);
+        String locale_text;
+        bool has_got = GetLocaleText(specifier_char, tm, Locale(), locale_text);
+        if (has_got) {
+            return false;
+        }
+        return locale_text.empty();
+    };
+    
+    ASSERT_TRUE(test('b'));
+    ASSERT_TRUE(test('h'));
+    ASSERT_TRUE(test('B'));
+}
+
+
 TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
     
     auto test = [](Char specifier_char) {
