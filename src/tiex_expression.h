@@ -16,7 +16,7 @@ enum class Unit {
     Year,
 };
 
-
+    
 class Boundary {
 public:
     int value = 0;

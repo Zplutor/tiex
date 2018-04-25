@@ -206,6 +206,7 @@ bool Parser::ParseUnit(Unit& unit) {
         if (word == each_item.word) {
             unit = each_item.unit;
             is_found = true;
+            break;
         }
     }
     
