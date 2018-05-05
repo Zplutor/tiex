@@ -156,8 +156,9 @@ bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Local
     else if ((specifier_char == 'a') || (specifier_char == 'A')) {
         if (locale.get_weekday != nullptr) {
             
-            bool abbreviated = specifier_char == 'a';
-            locale_text = locale.get_weekday(formatted_tm.tm_wday, abbreviated);
+            Locale::WeekdayOptions options;
+            options.is_abbreviated = (specifier_char == 'a');
+            locale_text = locale.get_weekday(formatted_tm.tm_wday, options);
             return true;
         }
     }

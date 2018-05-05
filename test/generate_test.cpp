@@ -293,9 +293,9 @@ TEST(Generate, GetLocaleText_Weekday) {
     auto test = [&weekday_map](int weekday, bool abbreviated, const String& expected_text) {
         
         Locale locale;
-        locale.get_weekday = [&weekday_map](int weekday, bool abbreviated) {
+        locale.get_weekday = [&weekday_map](int weekday, const Locale::WeekdayOptions& options) {
             const auto& pair = weekday_map[weekday];
-            return abbreviated ? pair.first : pair.second;
+            return options.is_abbreviated ? pair.first : pair.second;
         };
         
         auto tm = MakeTm(2018, 3, 18 + weekday, 13, 27, 28);
@@ -458,7 +458,7 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
         
         Locale locale;
         locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
-        locale.get_weekday = [](int weekday, bool abbreviated) { return TIEX_STRING("weekday"); };
+        locale.get_weekday = [](int weekday, const Locale::WeekdayOptions&) { return TIEX_STRING("weekday"); };
         locale.get_month = [](int month, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
         
         auto tm = MakeTm(2018, 3, 16, 13, 40, 22);
@@ -486,17 +486,18 @@ TEST(Generate, OverrideStandardSpecifiers_Normal) {
     
     Locale locale;
     locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
-    locale.get_weekday = [](int weekday, bool abbreviated) { return TIEX_STRING("weekday"); };
+    locale.get_weekday = [](int weekday, const Locale::WeekdayOptions&) { return TIEX_STRING("weekday"); };
+    locale.get_month = [](int month, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
     
-    auto result_text = TIEX_STRING("Override locale %A %a%p ");
+    auto result_text = TIEX_STRING("Override locale %A%a%p%b%h%B%m ");
     bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_TRUE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("Override locale weekday weekdayampm "));
+    ASSERT_EQ(result_text, TIEX_STRING("Override locale weekdayweekdayampmmonthmonthmonthmonth "));
     
-    result_text = TIEX_STRING("Override %H locale %A%a%p ");
+    result_text = TIEX_STRING("Override %H locale %A%a%p%b%h%B%m ");
     overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_FALSE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("Override %H locale weekdayweekdayampm "));
+    ASSERT_EQ(result_text, TIEX_STRING("Override %H locale weekdayweekdayampmmonthmonthmonthmonth "));
 }
 
 
@@ -506,7 +507,8 @@ TEST(Generate, OverrideStandardSpecifiers_EscapePercent) {
     
     Locale locale;
     locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
-    locale.get_weekday = [](int weekday, bool abbreviated) { return TIEX_STRING("weekday"); };
+    locale.get_weekday = [](int weekday, const Locale::WeekdayOptions&) { return TIEX_STRING("weekday"); };
+    locale.get_month = [](int month, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
     
     auto result_text = TIEX_STRING("Escape%% %%p %%M %a");
     bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
@@ -518,10 +520,10 @@ TEST(Generate, OverrideStandardSpecifiers_EscapePercent) {
 TEST(Generate, OverrideStandardSpecifiers_NoLocale) {
     
     auto tm = MakeTm(2018, 3, 18, 21, 58, 44);
-    auto result_text = TIEX_STRING("%p %a %A");
+    auto result_text = TIEX_STRING("%p %a %A %b %h %B %m");
     bool overrode_all = OverrideStandardSpecifiers(tm, Locale(), result_text);
     ASSERT_FALSE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("%p %a %A"));
+    ASSERT_EQ(result_text, TIEX_STRING("%p %a %A %b %h %B %m"));
 }
 
 
