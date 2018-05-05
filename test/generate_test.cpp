@@ -19,6 +19,39 @@ static long GetDifferenceWithTm(Unit unit, const std::tm& referenced, const std:
 }
 
 
+static String ToString(int value) {
+#if TIEX_USE_WCHAR
+    return std::to_wstring(value);
+#else
+    return std::to_string(value);
+#endif
+}
+
+
+static Locale GetFullLocale() {
+    Locale locale;
+    locale.get_month = [](int, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
+    locale.get_weekday = [](int, const Locale::WeekdayOptions&) { return TIEX_STRING("weekday"); };
+    locale.get_am_pm = [](bool) { return TIEX_STRING("ampm"); };
+    locale.get_hour = [](int, const Locale::HourOptions&) { return TIEX_STRING("hour"); };
+    locale.get_minute = [](int) { return TIEX_STRING("minute"); };
+    locale.get_second = [](int) { return TIEX_STRING("second"); };
+    return locale;
+}
+
+
+static std::set<Char> GetOverridableSpecifiers() {
+    return {
+        'p',
+        'a', 'A',
+        'b', 'h', 'B', 'm',
+        'M',
+        'S',
+        'H', 'I',
+    };
+}
+
+
 TEST(Generate, GetDifferenceWithTimet_Second) {
 
     auto test = [](std::time_t referenced, std::time_t formatted, long expected) {
@@ -268,16 +301,6 @@ TEST(Generate, GetLocaleText_AmPm) {
 }
 
 
-TEST(Generate, GetLocaleText_AmPmWithoutLocale) {
-    
-    auto tm = MakeTm(2018, 3, 16, 13, 20, 13);
-    String locale_text;
-    bool has_got = GetLocaleText('p', tm, Locale(), locale_text);
-    ASSERT_FALSE(has_got);
-    ASSERT_EQ(locale_text, String());
-}
-
-
 TEST(Generate, GetLocaleText_Weekday) {
     
     std::map<int, std::pair<String, String>> weekday_map = {
@@ -322,24 +345,6 @@ TEST(Generate, GetLocaleText_Weekday) {
     ASSERT_TRUE(test(4, false, TIEX_STRING("FOUR")));
     ASSERT_TRUE(test(5, false, TIEX_STRING("FIVE")));
     ASSERT_TRUE(test(6, false, TIEX_STRING("SIX")));
-}
-
-
-TEST(Generate, GetLocaleText_WeekdayWithoutLocale) {
-    
-    auto test = [](bool abbreviated) {
-        
-        auto tm = MakeTm(2018, 3, 16, 13, 38, 32);
-        String locale_text;
-        bool has_got = GetLocaleText(abbreviated ? 'a' : 'A', tm, Locale(), locale_text);
-        if (has_got) {
-            return false;
-        }
-        return locale_text.empty();
-    };
-    
-    ASSERT_TRUE(test(true));
-    ASSERT_TRUE(test(false));
 }
 
 
@@ -433,11 +438,104 @@ TEST(Generate, GetLocaleText_Month) {
 }
 
 
-TEST(Generate, GetLocaleText_MonthWithoutLocale) {
+TEST(Generate, GetLocaleText_Hour) {
+    
+    auto test = [](int hour, Char specifier, const String& expected) {
+        Locale locale;
+        locale.get_hour = [](int hour, const Locale::HourOptions& options) {
+            return ToString(hour);
+        };
+        auto tm = MakeTm(2018, 5, 5, hour, 0, 0);
+        String locale_text;
+        bool has_got = GetLocaleText(specifier, tm, locale, locale_text);
+        if (! has_got) {
+            return false;
+        }
+        return locale_text == expected;
+    };
+    
+    //24 hour clock
+    for (auto hour = 0; hour <= 23; ++hour) {
+        ASSERT_TRUE(test(hour, 'H', ToString(hour)));
+    }
+    
+    //12 hour clock
+    ASSERT_TRUE(test(0,  'I', TIEX_STRING("12")));
+    ASSERT_TRUE(test(1,  'I', TIEX_STRING("1")));
+    ASSERT_TRUE(test(2,  'I', TIEX_STRING("2")));
+    ASSERT_TRUE(test(3,  'I', TIEX_STRING("3")));
+    ASSERT_TRUE(test(4,  'I', TIEX_STRING("4")));
+    ASSERT_TRUE(test(5,  'I', TIEX_STRING("5")));
+    ASSERT_TRUE(test(6,  'I', TIEX_STRING("6")));
+    ASSERT_TRUE(test(7,  'I', TIEX_STRING("7")));
+    ASSERT_TRUE(test(8,  'I', TIEX_STRING("8")));
+    ASSERT_TRUE(test(9,  'I', TIEX_STRING("9")));
+    ASSERT_TRUE(test(10, 'I', TIEX_STRING("10")));
+    ASSERT_TRUE(test(11, 'I', TIEX_STRING("11")));
+    ASSERT_TRUE(test(12, 'I', TIEX_STRING("12")));
+    ASSERT_TRUE(test(13, 'I', TIEX_STRING("1")));
+    ASSERT_TRUE(test(14, 'I', TIEX_STRING("2")));
+    ASSERT_TRUE(test(15, 'I', TIEX_STRING("3")));
+    ASSERT_TRUE(test(16, 'I', TIEX_STRING("4")));
+    ASSERT_TRUE(test(17, 'I', TIEX_STRING("5")));
+    ASSERT_TRUE(test(18, 'I', TIEX_STRING("6")));
+    ASSERT_TRUE(test(19, 'I', TIEX_STRING("7")));
+    ASSERT_TRUE(test(20, 'I', TIEX_STRING("8")));
+    ASSERT_TRUE(test(21, 'I', TIEX_STRING("9")));
+    ASSERT_TRUE(test(22, 'I', TIEX_STRING("10")));
+    ASSERT_TRUE(test(23, 'I', TIEX_STRING("11")));
+}
+
+
+TEST(Generate, GetLocaleText_Minute) {
+    
+    auto test = [](int minute, const String& expected) {
+        Locale locale;
+        locale.get_minute = [](int minute) {
+            return ToString(minute);
+        };
+        auto tm = MakeTm(2018, 5, 5, 23, minute, 0);
+        String locale_text;
+        bool has_got = GetLocaleText('M', tm, locale, locale_text);
+        if (! has_got) {
+            return false;
+        }
+        return locale_text == expected;
+    };
+    
+    for (int minute = 0; minute <= 59; ++minute) {
+        ASSERT_TRUE(test(minute, ToString(minute)));
+    }
+}
+
+
+TEST(Generate, GetLocaleText_Second) {
+    
+    auto test = [](int second, const String& expected) {
+        Locale locale;
+        locale.get_second = [](int second) {
+            return ToString(second);
+        };
+        auto tm = MakeTm(2018, 5, 5, 23, 13, second);
+        String locale_text;
+        bool has_got = GetLocaleText('S', tm, locale, locale_text);
+        if (! has_got) {
+            return false;
+        }
+        return locale_text == expected;
+    };
+    
+    for (int second = 0; second <= 59; ++second) {
+        ASSERT_TRUE(test(second, ToString(second)));
+    }
+}
+
+
+TEST(Generate, GetLocaleText_NoLocale) {
     
     auto test = [](Char specifier_char) {
         
-        auto tm = MakeTm(2018, 3, 20, 18, 46, 21);
+        auto tm = MakeTm(2018, 5, 5, 23, 06, 29);
         String locale_text;
         bool has_got = GetLocaleText(specifier_char, tm, Locale(), locale_text);
         if (has_got) {
@@ -446,9 +544,9 @@ TEST(Generate, GetLocaleText_MonthWithoutLocale) {
         return locale_text.empty();
     };
     
-    ASSERT_TRUE(test('b'));
-    ASSERT_TRUE(test('h'));
-    ASSERT_TRUE(test('B'));
+    for (auto each_char : GetOverridableSpecifiers()) {
+        ASSERT_TRUE(test(each_char));
+    }
 }
 
 
@@ -456,10 +554,7 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
     
     auto test = [](Char specifier_char) {
         
-        Locale locale;
-        locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
-        locale.get_weekday = [](int weekday, const Locale::WeekdayOptions&) { return TIEX_STRING("weekday"); };
-        locale.get_month = [](int month, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
+        auto locale = GetFullLocale();
         
         auto tm = MakeTm(2018, 3, 16, 13, 40, 22);
         String locale_text;
@@ -470,8 +565,7 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
         return locale_text.empty();
     };
     
-    std::set<Char> supported_chars = { 'p', 'a', 'A', 'b', 'h', 'B', 'm' };
-    
+    auto supported_chars = GetOverridableSpecifiers();
     for (int ch = std::numeric_limits<Char>::min(); ch <= std::numeric_limits<Char>::max(); ++ch) {
         if (supported_chars.find(static_cast<Char>(ch)) == supported_chars.end()) {
             ASSERT_TRUE(test(static_cast<Char>(ch)));
@@ -483,33 +577,25 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
 TEST(Generate, OverrideStandardSpecifiers_Normal) {
         
     auto tm = MakeTm(2018, 3, 18, 22, 23, 49);
-    
-    Locale locale;
-    locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
-    locale.get_weekday = [](int weekday, const Locale::WeekdayOptions&) { return TIEX_STRING("weekday"); };
-    locale.get_month = [](int month, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
+    auto locale = GetFullLocale();
     
     auto result_text = TIEX_STRING("Override locale %A%a%p%b%h%B%m ");
     bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_TRUE(overrode_all);
     ASSERT_EQ(result_text, TIEX_STRING("Override locale weekdayweekdayampmmonthmonthmonthmonth "));
     
-    result_text = TIEX_STRING("Override %H locale %A%a%p%b%h%B%m ");
+    result_text = TIEX_STRING("Override %Z locale %A%a%p%b%h%B%m ");
     overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_FALSE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("Override %H locale weekdayweekdayampmmonthmonthmonthmonth "));
+    ASSERT_EQ(result_text, TIEX_STRING("Override %Z locale weekdayweekdayampmmonthmonthmonthmonth "));
 }
 
 
 TEST(Generate, OverrideStandardSpecifiers_EscapePercent) {
     
     auto tm = MakeTm(2018, 3, 18, 22, 30, 1);
-    
-    Locale locale;
-    locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
-    locale.get_weekday = [](int weekday, const Locale::WeekdayOptions&) { return TIEX_STRING("weekday"); };
-    locale.get_month = [](int month, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
-    
+    auto locale = GetFullLocale();
+
     auto result_text = TIEX_STRING("Escape%% %%p %%M %a");
     bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_TRUE(overrode_all);
@@ -530,8 +616,8 @@ TEST(Generate, OverrideStandardSpecifiers_NoLocale) {
 TEST(Generate, OverrideStandardSpecifiers_PercentAtTail) {
     
     auto tm = MakeTm(2018, 3, 18, 22, 20, 0);
-    Locale locale;
-    locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
+    auto locale = GetFullLocale();
+    
     auto result_text = TIEX_STRING("Result text %");
     bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_TRUE(overrode_all);

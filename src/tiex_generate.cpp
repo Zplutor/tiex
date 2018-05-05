@@ -145,7 +145,47 @@ bool GetTimeDifference(
     
 bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Locale& locale, String& locale_text) {
     
-    if (specifier_char == 'p') {
+    //Mintue
+    if (specifier_char == 'M') {
+        if (locale.get_minute != nullptr) {
+            
+            locale_text = locale.get_minute(formatted_tm.tm_min);
+            return true;
+        }
+    }
+    //Second
+    else if (specifier_char == 'S') {
+        if (locale.get_second != nullptr) {
+            
+            locale_text = locale.get_second(formatted_tm.tm_sec);
+            return true;
+        }
+    }
+    //Hour
+    else if ((specifier_char == 'H') ||
+             (specifier_char == 'I')) {
+        if (locale.get_hour != nullptr) {
+            
+            Locale::HourOptions options;
+            int hour = formatted_tm.tm_hour;
+            
+            if (specifier_char == 'I') {
+                options.is_12_hour_clock = true;
+                
+                if (hour == 0) {
+                    hour = 12;
+                }
+                else if (hour > 12) {
+                    hour -= 12;
+                }
+            }
+            
+            locale_text = locale.get_hour(hour, options);
+            return true;
+        }
+    }
+    //AM/PM
+    else if (specifier_char == 'p') {
         if (locale.get_am_pm != nullptr) {
             
             bool is_pm = formatted_tm.tm_hour >= 12;
@@ -153,7 +193,9 @@ bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Local
             return true;
         }
     }
-    else if ((specifier_char == 'a') || (specifier_char == 'A')) {
+    //Weekday
+    else if ((specifier_char == 'a') ||
+             (specifier_char == 'A')) {
         if (locale.get_weekday != nullptr) {
             
             Locale::WeekdayOptions options;
@@ -162,6 +204,7 @@ bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Local
             return true;
         }
     }
+    //Month
     else if ((specifier_char == 'b') ||
              (specifier_char == 'h') ||
              (specifier_char == 'B') ||
@@ -189,7 +232,10 @@ bool OverrideStandardSpecifiers(const std::tm& formatted_tm, const Locale& local
     
     if ((locale.get_month == nullptr) &&
         (locale.get_weekday == nullptr) &&
-        (locale.get_am_pm == nullptr)) {
+        (locale.get_am_pm == nullptr) &&
+        (locale.get_hour == nullptr) &&
+        (locale.get_minute == nullptr) &&
+        (locale.get_second == nullptr)) {
         return false;
     }
     
