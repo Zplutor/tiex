@@ -51,15 +51,21 @@ TEST(Scanner, ReadChar) {
 
 TEST(Scanner, ReadWord) {
     
-    {
-        auto string = TIEX_STRING("This is a library.");
+    auto test_succeess = [](const String& string, const String& expected) {
         Scanner scanner(string.c_str(), string.length());
         String word;
         bool is_succeeded = scanner.ReadWord(word);
-        ASSERT_TRUE(is_succeeded);
-        ASSERT_EQ(word, TIEX_STRING("This"));
-        ASSERT_EQ(4, scanner.GetCurrentIndex());
-    }
+        if (! is_succeeded) {
+            return false;
+        }
+        if (word != expected) {
+            return false;
+        }
+        return expected.length() == scanner.GetCurrentIndex();
+    };
+    
+    ASSERT_TRUE(test_succeess(TIEX_STRING("This is a library."), TIEX_STRING("This")));
+    ASSERT_TRUE(test_succeess(TIEX_STRING("hour小时"), TIEX_STRING("hour")));
     
     auto test_failure = [](const String& string) {
         Scanner scanner(string.c_str(), string.length());
