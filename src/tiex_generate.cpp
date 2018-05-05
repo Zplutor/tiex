@@ -161,11 +161,21 @@ bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Local
             return true;
         }
     }
-    else if ((specifier_char == 'b') || (specifier_char == 'h') || (specifier_char == 'B')) {
+    else if ((specifier_char == 'b') ||
+             (specifier_char == 'h') ||
+             (specifier_char == 'B') ||
+             (specifier_char == 'm')) {
         if (locale.get_month != nullptr) {
             
-            bool abbreviated = specifier_char != 'B';
-            locale_text = locale.get_month(formatted_tm.tm_mon + 1, abbreviated);
+            Locale::MonthOptions options;
+            if (specifier_char == 'm') {
+                options.is_number = true;
+            }
+            else if (specifier_char != 'B') {
+                options.is_abbreviated = true;
+            }
+        
+            locale_text = locale.get_month(formatted_tm.tm_mon + 1, options);
             return true;
         }
     }
@@ -176,7 +186,9 @@ bool GetLocaleText(Char specifier_char, const std::tm& formatted_tm, const Local
     
 bool OverrideStandardSpecifiers(const std::tm& formatted_tm, const Locale& locale, String& result_text) {
     
-    if ((locale.get_weekday == nullptr) && (locale.get_am_pm == nullptr)) {
+    if ((locale.get_month == nullptr) &&
+        (locale.get_weekday == nullptr) &&
+        (locale.get_am_pm == nullptr)) {
         return false;
     }
     

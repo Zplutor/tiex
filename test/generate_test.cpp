@@ -345,27 +345,33 @@ TEST(Generate, GetLocaleText_WeekdayWithoutLocale) {
 
 TEST(Generate, GetLocaleText_Month) {
     
-    std::map<int, std::pair<String, String>> month_map = {
-        { 1, { TIEX_STRING("one"), TIEX_STRING("ONE") } },
-        { 2, { TIEX_STRING("two"), TIEX_STRING("TWO") } },
-        { 3, { TIEX_STRING("three"), TIEX_STRING("THREE") } },
-        { 4, { TIEX_STRING("four"), TIEX_STRING("FOUR") } },
-        { 5, { TIEX_STRING("five"), TIEX_STRING("FIVE") } },
-        { 6, { TIEX_STRING("six"), TIEX_STRING("SIX") } },
-        { 7, { TIEX_STRING("seven"), TIEX_STRING("SEVEN") } },
-        { 8, { TIEX_STRING("eight"), TIEX_STRING("EIGHT") } },
-        { 9, { TIEX_STRING("nine"), TIEX_STRING("NINE") } },
-        { 10, { TIEX_STRING("ten"), TIEX_STRING("TEN") } },
-        { 11, { TIEX_STRING("eleven"), TIEX_STRING("ELEVEN") } },
-        { 12, { TIEX_STRING("twelve"), TIEX_STRING("TWELVE") } },
+    std::map<int, std::tuple<String, String, String>> month_map = {
+        { 1,  { TIEX_STRING("one"),    TIEX_STRING("ONE"),    TIEX_STRING("001")  } },
+        { 2,  { TIEX_STRING("two"),    TIEX_STRING("TWO"),    TIEX_STRING("002")  } },
+        { 3,  { TIEX_STRING("three"),  TIEX_STRING("THREE"),  TIEX_STRING("003")  } },
+        { 4,  { TIEX_STRING("four"),   TIEX_STRING("FOUR"),   TIEX_STRING("004")  } },
+        { 5,  { TIEX_STRING("five"),   TIEX_STRING("FIVE"),   TIEX_STRING("005")  } },
+        { 6,  { TIEX_STRING("six"),    TIEX_STRING("SIX"),    TIEX_STRING("006")  } },
+        { 7,  { TIEX_STRING("seven"),  TIEX_STRING("SEVEN"),  TIEX_STRING("007")  } },
+        { 8,  { TIEX_STRING("eight"),  TIEX_STRING("EIGHT"),  TIEX_STRING("008")  } },
+        { 9,  { TIEX_STRING("nine"),   TIEX_STRING("NINE"),   TIEX_STRING("009")  } },
+        { 10, { TIEX_STRING("ten"),    TIEX_STRING("TEN"),    TIEX_STRING("0010") } },
+        { 11, { TIEX_STRING("eleven"), TIEX_STRING("ELEVEN"), TIEX_STRING("0011") } },
+        { 12, { TIEX_STRING("twelve"), TIEX_STRING("TWELVE"), TIEX_STRING("0012") } },
     };
     
     auto test = [&month_map](int month, const std::vector<Char> specifier_chars, const String& expected_text) {
         
         Locale locale;
-        locale.get_month = [&month_map](int month, bool abbreviated) {
-            const auto& pair = month_map[month];
-            return abbreviated ? pair.first : pair.second;
+        locale.get_month = [&month_map](int month, const Locale::MonthOptions& options) {
+            const auto& tuple = month_map[month];
+            if (options.is_number) {
+                return std::get<2>(tuple);
+            }
+            if (options.is_abbreviated) {
+                return std::get<0>(tuple);
+            }
+            return std::get<1>(tuple);
         };
         
         auto tm = MakeTm(2018, month, 20, 18, 39, 8);
@@ -411,6 +417,19 @@ TEST(Generate, GetLocaleText_Month) {
     ASSERT_TRUE(test(10, { 'B' }, TIEX_STRING("TEN")));
     ASSERT_TRUE(test(11, { 'B' }, TIEX_STRING("ELEVEN")));
     ASSERT_TRUE(test(12, { 'B' }, TIEX_STRING("TWELVE")));
+    
+    ASSERT_TRUE(test(1, { 'm' }, TIEX_STRING("001")));
+    ASSERT_TRUE(test(2, { 'm' }, TIEX_STRING("002")));
+    ASSERT_TRUE(test(3, { 'm' }, TIEX_STRING("003")));
+    ASSERT_TRUE(test(4, { 'm' }, TIEX_STRING("004")));
+    ASSERT_TRUE(test(5, { 'm' }, TIEX_STRING("005")));
+    ASSERT_TRUE(test(6, { 'm' }, TIEX_STRING("006")));
+    ASSERT_TRUE(test(7, { 'm' }, TIEX_STRING("007")));
+    ASSERT_TRUE(test(8, { 'm' }, TIEX_STRING("008")));
+    ASSERT_TRUE(test(9, { 'm' }, TIEX_STRING("009")));
+    ASSERT_TRUE(test(10, { 'm' }, TIEX_STRING("0010")));
+    ASSERT_TRUE(test(11, { 'm' }, TIEX_STRING("0011")));
+    ASSERT_TRUE(test(12, { 'm' }, TIEX_STRING("0012")));
 }
 
 
@@ -440,7 +459,7 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
         Locale locale;
         locale.get_am_pm = [](bool is_pm) { return TIEX_STRING("ampm"); };
         locale.get_weekday = [](int weekday, bool abbreviated) { return TIEX_STRING("weekday"); };
-        locale.get_month = [](int month, bool abbreviated) { return TIEX_STRING("month"); };
+        locale.get_month = [](int month, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
         
         auto tm = MakeTm(2018, 3, 16, 13, 40, 22);
         String locale_text;
@@ -451,7 +470,7 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
         return locale_text.empty();
     };
     
-    std::set<Char> supported_chars = { 'p', 'a', 'A', 'b', 'h', 'B' };
+    std::set<Char> supported_chars = { 'p', 'a', 'A', 'b', 'h', 'B', 'm' };
     
     for (int ch = std::numeric_limits<Char>::min(); ch <= std::numeric_limits<Char>::max(); ++ch) {
         if (supported_chars.find(static_cast<Char>(ch)) == supported_chars.end()) {
