@@ -3,13 +3,27 @@
 
 namespace tiex {
 namespace internal {
+namespace {
+
+/**
+ Determinate whether the specified character is an ASCII alpha.
+
+ std::iswalpha in MSVC always returns unexpected result with Chinese 
+ character no matter what locale is set, so a rewritten version here
+ is used.
+ */
+inline bool IsAlpha(Char ch) {
+    return 
+        ((TIEX_LITERAL('a') <= ch) && (ch <= TIEX_LITERAL('z'))) ||
+        ((TIEX_LITERAL('A') <= ch) && (ch <= TIEX_LITERAL('Z')));
+}
+
+}
 
 #if TIEX_USE_WCHAR
-    #define IsAlpha std::iswalpha
     #define IsDigit std::iswdigit
     #define IsSpace std::iswspace
 #else
-    #define IsAlpha std::isalpha
     #define IsDigit std::isdigit
     #define IsSpace std::isspace
 #endif
