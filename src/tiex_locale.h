@@ -1,14 +1,18 @@
 #pragma once
 
 #include <functional>
-#include "tiex_config.h"
+#include <string>
 
 namespace tiex {
     
 /**
  A locale contains information that help to format localized time string.
  */
-class Locale {
+template<typename C>
+class BasicLocale {
+public:
+	using String = std::basic_string<C>;
+
 public:
     /**
      Contains options to format localized string of month.
@@ -165,5 +169,8 @@ public:
      */
     GetSecondCallback get_second;
 };
+
+using Locale = BasicLocale<char>;
+using WideLocale = BasicLocale<wchar_t>;
     
 }

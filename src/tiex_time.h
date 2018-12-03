@@ -1,7 +1,6 @@
 #pragma once
 
 #include <ctime>
-#include "tiex_config.h"
 
 namespace tiex {
 namespace internal {

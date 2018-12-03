@@ -1,10 +1,8 @@
 #pragma once
 
-#include "tiex_config.h"
-
 namespace tiex {
 
-/**
+/*
  Represents an error when parsing format expression.
  */
 class ParseError {
@@ -44,7 +42,6 @@ public:
     void Clear() {
         status = Status::None;
         index = 0;
-        token.clear();
     }
     
 public:
@@ -57,11 +54,6 @@ public:
      The parsing position in format expression when the error occurs.
      */
     std::size_t index = 0;
-    
-    /**
-     The token that causes the error. Maybe empty.
-     */
-    String token;
 };
 
 

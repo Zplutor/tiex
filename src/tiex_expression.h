@@ -1,8 +1,8 @@
 #pragma once
 
 #include <map>
+#include <string>
 #include <vector>
-#include "tiex_config.h"
 
 namespace tiex {
 
@@ -38,24 +38,36 @@ public:
 };
 
 
-class Result {
+template<typename C>
+class BasicResult {
 public:
-    std::vector<String> texts;
+    std::vector<std::basic_string<C>> texts;
     std::map<std::size_t, Specifier> specifiers;
     bool has_standard_specifiers = false;
 };
 
+using Result = BasicResult<char>;
+using WideResult = BasicResult<wchar_t>;
 
-class Rule {
+
+template<typename C>
+class BasicRule {
 public:
     Condition condition;
-    Result result;
+    BasicResult<C> result;
 };
 
+using Rule = BasicRule<char>;
+using WideRule = BasicRule<wchar_t>;
 
-class Expression {
+
+template<typename C>
+class BasicExpression {
 public:
-    std::vector<Rule> rules;
+    std::vector<BasicRule<C>> rules;
 };
+
+using Expression = BasicExpression<char>;
+using WideExpression = BasicExpression<wchar_t>;
 
 }

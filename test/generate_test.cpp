@@ -19,7 +19,7 @@ static long GetDifferenceWithTm(Unit unit, const std::tm& referenced, const std:
 }
 
 
-static String ToString(int value) {
+static std::string ToString(int value) {
 #if TIEX_USE_WCHAR
     return std::to_wstring(value);
 #else
@@ -30,17 +30,17 @@ static String ToString(int value) {
 
 static Locale GetFullLocale() {
     Locale locale;
-    locale.get_month = [](int, const Locale::MonthOptions&) { return TIEX_STRING("month"); };
-    locale.get_weekday = [](int, const Locale::WeekdayOptions&) { return TIEX_STRING("weekday"); };
-    locale.get_am_pm = [](bool) { return TIEX_STRING("ampm"); };
-    locale.get_hour = [](int, const Locale::HourOptions&) { return TIEX_STRING("hour"); };
-    locale.get_minute = [](int) { return TIEX_STRING("minute"); };
-    locale.get_second = [](int) { return TIEX_STRING("second"); };
+    locale.get_month = [](int, const Locale::MonthOptions&) { return "month"; };
+    locale.get_weekday = [](int, const Locale::WeekdayOptions&) { return "weekday"; };
+    locale.get_am_pm = [](bool) { return "ampm"; };
+    locale.get_hour = [](int, const Locale::HourOptions&) { return "hour"; };
+    locale.get_minute = [](int) { return "minute"; };
+    locale.get_second = [](int) { return "second"; };
     return locale;
 }
 
 
-static std::set<Char> GetOverridableSpecifiers() {
+static std::set<char> GetOverridableSpecifiers() {
     return {
         'p',
         'a', 'A',
@@ -256,21 +256,21 @@ TEST(Generate, GetLocaleText_AmPm) {
         
         Locale locale;
         locale.get_am_pm = [](bool is_pm) {
-            return is_pm ? TIEX_STRING("late") : TIEX_STRING("early");
+            return is_pm ? "late" : "early";
         };
         
         auto tm = MakeTm(2018, 3, 16, hour, 10, 13);
-        String locale_text;
+        std::string locale_text;
         bool has_got = GetLocaleText('p', tm, locale, locale_text);
         if (! has_got) {
             return false;
         }
         
         if (expected_pm) {
-            return locale_text == TIEX_STRING("late");
+            return locale_text == "late";
         }
         else {
-            return locale_text == TIEX_STRING("early");
+            return locale_text == "early";
         }
     };
     
@@ -303,17 +303,17 @@ TEST(Generate, GetLocaleText_AmPm) {
 
 TEST(Generate, GetLocaleText_Weekday) {
     
-    std::map<int, std::pair<String, String>> weekday_map = {
-        { 0, { TIEX_STRING("zero"), TIEX_STRING("ZERO") } },
-        { 1, { TIEX_STRING("one"), TIEX_STRING("ONE") } },
-        { 2, { TIEX_STRING("two"), TIEX_STRING("TWO") } },
-        { 3, { TIEX_STRING("three"), TIEX_STRING("THREE") } },
-        { 4, { TIEX_STRING("four"), TIEX_STRING("FOUR") } },
-        { 5, { TIEX_STRING("five"), TIEX_STRING("FIVE") } },
-        { 6, { TIEX_STRING("six"), TIEX_STRING("SIX") } },
+    std::map<int, std::pair<std::string, std::string>> weekday_map = {
+        { 0, { "zero", "ZERO" } },
+        { 1, { "one", "ONE" } },
+        { 2, { "two", "TWO" } },
+        { 3, { "three", "THREE" } },
+        { 4, { "four", "FOUR" } },
+        { 5, { "five", "FIVE" } },
+        { 6, { "six", "SIX" } },
     };
     
-    auto test = [&weekday_map](int weekday, bool abbreviated, const String& expected_text) {
+    auto test = [&weekday_map](int weekday, bool abbreviated, const std::string& expected_text) {
         
         Locale locale;
         locale.get_weekday = [&weekday_map](int weekday, const Locale::WeekdayOptions& options) {
@@ -322,7 +322,7 @@ TEST(Generate, GetLocaleText_Weekday) {
         };
         
         auto tm = MakeTm(2018, 3, 18 + weekday, 13, 27, 28);
-        String locale_text;
+        std::string locale_text;
         bool has_got = GetLocaleText(abbreviated ? 'a' : 'A', tm, locale, locale_text);
         if (! has_got) {
             return false;
@@ -331,41 +331,41 @@ TEST(Generate, GetLocaleText_Weekday) {
         return locale_text == expected_text;
     };
     
-    ASSERT_TRUE(test(0, true, TIEX_STRING("zero")));
-    ASSERT_TRUE(test(1, true, TIEX_STRING("one")));
-    ASSERT_TRUE(test(2, true, TIEX_STRING("two")));
-    ASSERT_TRUE(test(3, true, TIEX_STRING("three")));
-    ASSERT_TRUE(test(4, true, TIEX_STRING("four")));
-    ASSERT_TRUE(test(5, true, TIEX_STRING("five")));
-    ASSERT_TRUE(test(6, true, TIEX_STRING("six")));
-    ASSERT_TRUE(test(0, false, TIEX_STRING("ZERO")));
-    ASSERT_TRUE(test(1, false, TIEX_STRING("ONE")));
-    ASSERT_TRUE(test(2, false, TIEX_STRING("TWO")));
-    ASSERT_TRUE(test(3, false, TIEX_STRING("THREE")));
-    ASSERT_TRUE(test(4, false, TIEX_STRING("FOUR")));
-    ASSERT_TRUE(test(5, false, TIEX_STRING("FIVE")));
-    ASSERT_TRUE(test(6, false, TIEX_STRING("SIX")));
+    ASSERT_TRUE(test(0, true, "zero"));
+    ASSERT_TRUE(test(1, true, "one"));
+    ASSERT_TRUE(test(2, true, "two"));
+    ASSERT_TRUE(test(3, true, "three"));
+    ASSERT_TRUE(test(4, true, "four"));
+    ASSERT_TRUE(test(5, true, "five"));
+    ASSERT_TRUE(test(6, true, "six"));
+    ASSERT_TRUE(test(0, false, "ZERO"));
+    ASSERT_TRUE(test(1, false, "ONE"));
+    ASSERT_TRUE(test(2, false, "TWO"));
+    ASSERT_TRUE(test(3, false, "THREE"));
+    ASSERT_TRUE(test(4, false, "FOUR"));
+    ASSERT_TRUE(test(5, false, "FIVE"));
+    ASSERT_TRUE(test(6, false, "SIX"));
 }
 
 
 TEST(Generate, GetLocaleText_Month) {
     
-    std::map<int, std::tuple<String, String, String>> month_map = {
-        { 1,  { TIEX_STRING("one"),    TIEX_STRING("ONE"),    TIEX_STRING("001")  } },
-        { 2,  { TIEX_STRING("two"),    TIEX_STRING("TWO"),    TIEX_STRING("002")  } },
-        { 3,  { TIEX_STRING("three"),  TIEX_STRING("THREE"),  TIEX_STRING("003")  } },
-        { 4,  { TIEX_STRING("four"),   TIEX_STRING("FOUR"),   TIEX_STRING("004")  } },
-        { 5,  { TIEX_STRING("five"),   TIEX_STRING("FIVE"),   TIEX_STRING("005")  } },
-        { 6,  { TIEX_STRING("six"),    TIEX_STRING("SIX"),    TIEX_STRING("006")  } },
-        { 7,  { TIEX_STRING("seven"),  TIEX_STRING("SEVEN"),  TIEX_STRING("007")  } },
-        { 8,  { TIEX_STRING("eight"),  TIEX_STRING("EIGHT"),  TIEX_STRING("008")  } },
-        { 9,  { TIEX_STRING("nine"),   TIEX_STRING("NINE"),   TIEX_STRING("009")  } },
-        { 10, { TIEX_STRING("ten"),    TIEX_STRING("TEN"),    TIEX_STRING("0010") } },
-        { 11, { TIEX_STRING("eleven"), TIEX_STRING("ELEVEN"), TIEX_STRING("0011") } },
-        { 12, { TIEX_STRING("twelve"), TIEX_STRING("TWELVE"), TIEX_STRING("0012") } },
+    std::map<int, std::tuple<std::string, std::string, std::string>> month_map = {
+        { 1,  { "one",    "ONE",    "001"  } },
+        { 2,  { "two",    "TWO",    "002"  } },
+        { 3,  { "three",  "THREE",  "003"  } },
+        { 4,  { "four",   "FOUR",   "004"  } },
+        { 5,  { "five",   "FIVE",   "005"  } },
+        { 6,  { "six",    "SIX",    "006"  } },
+        { 7,  { "seven",  "SEVEN",  "007"  } },
+        { 8,  { "eight",  "EIGHT",  "008"  } },
+        { 9,  { "nine",   "NINE",   "009"  } },
+        { 10, { "ten",    "TEN",    "0010" } },
+        { 11, { "eleven", "ELEVEN", "0011" } },
+        { 12, { "twelve", "TWELVE", "0012" } },
     };
     
-    auto test = [&month_map](int month, const std::vector<Char> specifier_chars, const String& expected_text) {
+    auto test = [&month_map](int month, const std::vector<char> specifier_chars, const std::string& expected_text) {
         
         Locale locale;
         locale.get_month = [&month_map](int month, const Locale::MonthOptions& options) {
@@ -383,7 +383,7 @@ TEST(Generate, GetLocaleText_Month) {
         
         for (auto each_char : specifier_chars) {
         
-            String locale_text;
+            std::string locale_text;
             bool has_got = GetLocaleText(each_char, tm, locale, locale_text);
             if (! has_got) {
                 return false;
@@ -397,56 +397,56 @@ TEST(Generate, GetLocaleText_Month) {
         return true;
     };
     
-    ASSERT_TRUE(test(1, { 'b', 'h' }, TIEX_STRING("one")));
-    ASSERT_TRUE(test(2, { 'b', 'h' }, TIEX_STRING("two")));
-    ASSERT_TRUE(test(3, { 'b', 'h' }, TIEX_STRING("three")));
-    ASSERT_TRUE(test(4, { 'b', 'h' }, TIEX_STRING("four")));
-    ASSERT_TRUE(test(5, { 'b', 'h' }, TIEX_STRING("five")));
-    ASSERT_TRUE(test(6, { 'b', 'h' }, TIEX_STRING("six")));
-    ASSERT_TRUE(test(7, { 'b', 'h' }, TIEX_STRING("seven")));
-    ASSERT_TRUE(test(8, { 'b', 'h' }, TIEX_STRING("eight")));
-    ASSERT_TRUE(test(9, { 'b', 'h' }, TIEX_STRING("nine")));
-    ASSERT_TRUE(test(10, { 'b', 'h' }, TIEX_STRING("ten")));
-    ASSERT_TRUE(test(11, { 'b', 'h' }, TIEX_STRING("eleven")));
-    ASSERT_TRUE(test(12, { 'b', 'h' }, TIEX_STRING("twelve")));
+    ASSERT_TRUE(test(1, { 'b', 'h' }, "one"));
+    ASSERT_TRUE(test(2, { 'b', 'h' }, "two"));
+    ASSERT_TRUE(test(3, { 'b', 'h' }, "three"));
+    ASSERT_TRUE(test(4, { 'b', 'h' }, "four"));
+    ASSERT_TRUE(test(5, { 'b', 'h' }, "five"));
+    ASSERT_TRUE(test(6, { 'b', 'h' }, "six"));
+    ASSERT_TRUE(test(7, { 'b', 'h' }, "seven"));
+    ASSERT_TRUE(test(8, { 'b', 'h' }, "eight"));
+    ASSERT_TRUE(test(9, { 'b', 'h' }, "nine"));
+    ASSERT_TRUE(test(10, { 'b', 'h' }, "ten"));
+    ASSERT_TRUE(test(11, { 'b', 'h' }, "eleven"));
+    ASSERT_TRUE(test(12, { 'b', 'h' }, "twelve"));
     
-    ASSERT_TRUE(test(1, { 'B' }, TIEX_STRING("ONE")));
-    ASSERT_TRUE(test(2, { 'B' }, TIEX_STRING("TWO")));
-    ASSERT_TRUE(test(3, { 'B' }, TIEX_STRING("THREE")));
-    ASSERT_TRUE(test(4, { 'B' }, TIEX_STRING("FOUR")));
-    ASSERT_TRUE(test(5, { 'B' }, TIEX_STRING("FIVE")));
-    ASSERT_TRUE(test(6, { 'B' }, TIEX_STRING("SIX")));
-    ASSERT_TRUE(test(7, { 'B' }, TIEX_STRING("SEVEN")));
-    ASSERT_TRUE(test(8, { 'B' }, TIEX_STRING("EIGHT")));
-    ASSERT_TRUE(test(9, { 'B' }, TIEX_STRING("NINE")));
-    ASSERT_TRUE(test(10, { 'B' }, TIEX_STRING("TEN")));
-    ASSERT_TRUE(test(11, { 'B' }, TIEX_STRING("ELEVEN")));
-    ASSERT_TRUE(test(12, { 'B' }, TIEX_STRING("TWELVE")));
+    ASSERT_TRUE(test(1, { 'B' }, "ONE"));
+    ASSERT_TRUE(test(2, { 'B' }, "TWO"));
+    ASSERT_TRUE(test(3, { 'B' }, "THREE"));
+    ASSERT_TRUE(test(4, { 'B' }, "FOUR"));
+    ASSERT_TRUE(test(5, { 'B' }, "FIVE"));
+    ASSERT_TRUE(test(6, { 'B' }, "SIX"));
+    ASSERT_TRUE(test(7, { 'B' }, "SEVEN"));
+    ASSERT_TRUE(test(8, { 'B' }, "EIGHT"));
+    ASSERT_TRUE(test(9, { 'B' }, "NINE"));
+    ASSERT_TRUE(test(10, { 'B' }, "TEN"));
+    ASSERT_TRUE(test(11, { 'B' }, "ELEVEN"));
+    ASSERT_TRUE(test(12, { 'B' }, "TWELVE"));
     
-    ASSERT_TRUE(test(1, { 'm' }, TIEX_STRING("001")));
-    ASSERT_TRUE(test(2, { 'm' }, TIEX_STRING("002")));
-    ASSERT_TRUE(test(3, { 'm' }, TIEX_STRING("003")));
-    ASSERT_TRUE(test(4, { 'm' }, TIEX_STRING("004")));
-    ASSERT_TRUE(test(5, { 'm' }, TIEX_STRING("005")));
-    ASSERT_TRUE(test(6, { 'm' }, TIEX_STRING("006")));
-    ASSERT_TRUE(test(7, { 'm' }, TIEX_STRING("007")));
-    ASSERT_TRUE(test(8, { 'm' }, TIEX_STRING("008")));
-    ASSERT_TRUE(test(9, { 'm' }, TIEX_STRING("009")));
-    ASSERT_TRUE(test(10, { 'm' }, TIEX_STRING("0010")));
-    ASSERT_TRUE(test(11, { 'm' }, TIEX_STRING("0011")));
-    ASSERT_TRUE(test(12, { 'm' }, TIEX_STRING("0012")));
+    ASSERT_TRUE(test(1, { 'm' }, "001"));
+    ASSERT_TRUE(test(2, { 'm' }, "002"));
+    ASSERT_TRUE(test(3, { 'm' }, "003"));
+    ASSERT_TRUE(test(4, { 'm' }, "004"));
+    ASSERT_TRUE(test(5, { 'm' }, "005"));
+    ASSERT_TRUE(test(6, { 'm' }, "006"));
+    ASSERT_TRUE(test(7, { 'm' }, "007"));
+    ASSERT_TRUE(test(8, { 'm' }, "008"));
+    ASSERT_TRUE(test(9, { 'm' }, "009"));
+    ASSERT_TRUE(test(10, { 'm' }, "0010"));
+    ASSERT_TRUE(test(11, { 'm' }, "0011"));
+    ASSERT_TRUE(test(12, { 'm' }, "0012"));
 }
 
 
 TEST(Generate, GetLocaleText_Hour) {
     
-    auto test = [](int hour, Char specifier, const String& expected) {
+    auto test = [](int hour, char specifier, const std::string& expected) {
         Locale locale;
         locale.get_hour = [](int hour, const Locale::HourOptions& options) {
             return ToString(hour);
         };
         auto tm = MakeTm(2018, 5, 5, hour, 0, 0);
-        String locale_text;
+        std::string locale_text;
         bool has_got = GetLocaleText(specifier, tm, locale, locale_text);
         if (! has_got) {
             return false;
@@ -460,42 +460,42 @@ TEST(Generate, GetLocaleText_Hour) {
     }
     
     //12 hour clock
-    ASSERT_TRUE(test(0,  'I', TIEX_STRING("12")));
-    ASSERT_TRUE(test(1,  'I', TIEX_STRING("1")));
-    ASSERT_TRUE(test(2,  'I', TIEX_STRING("2")));
-    ASSERT_TRUE(test(3,  'I', TIEX_STRING("3")));
-    ASSERT_TRUE(test(4,  'I', TIEX_STRING("4")));
-    ASSERT_TRUE(test(5,  'I', TIEX_STRING("5")));
-    ASSERT_TRUE(test(6,  'I', TIEX_STRING("6")));
-    ASSERT_TRUE(test(7,  'I', TIEX_STRING("7")));
-    ASSERT_TRUE(test(8,  'I', TIEX_STRING("8")));
-    ASSERT_TRUE(test(9,  'I', TIEX_STRING("9")));
-    ASSERT_TRUE(test(10, 'I', TIEX_STRING("10")));
-    ASSERT_TRUE(test(11, 'I', TIEX_STRING("11")));
-    ASSERT_TRUE(test(12, 'I', TIEX_STRING("12")));
-    ASSERT_TRUE(test(13, 'I', TIEX_STRING("1")));
-    ASSERT_TRUE(test(14, 'I', TIEX_STRING("2")));
-    ASSERT_TRUE(test(15, 'I', TIEX_STRING("3")));
-    ASSERT_TRUE(test(16, 'I', TIEX_STRING("4")));
-    ASSERT_TRUE(test(17, 'I', TIEX_STRING("5")));
-    ASSERT_TRUE(test(18, 'I', TIEX_STRING("6")));
-    ASSERT_TRUE(test(19, 'I', TIEX_STRING("7")));
-    ASSERT_TRUE(test(20, 'I', TIEX_STRING("8")));
-    ASSERT_TRUE(test(21, 'I', TIEX_STRING("9")));
-    ASSERT_TRUE(test(22, 'I', TIEX_STRING("10")));
-    ASSERT_TRUE(test(23, 'I', TIEX_STRING("11")));
+    ASSERT_TRUE(test(0,  'I', "12"));
+    ASSERT_TRUE(test(1,  'I', "1"));
+    ASSERT_TRUE(test(2,  'I', "2"));
+    ASSERT_TRUE(test(3,  'I', "3"));
+    ASSERT_TRUE(test(4,  'I', "4"));
+    ASSERT_TRUE(test(5,  'I', "5"));
+    ASSERT_TRUE(test(6,  'I', "6"));
+    ASSERT_TRUE(test(7,  'I', "7"));
+    ASSERT_TRUE(test(8,  'I', "8"));
+    ASSERT_TRUE(test(9,  'I', "9"));
+    ASSERT_TRUE(test(10, 'I', "10"));
+    ASSERT_TRUE(test(11, 'I', "11"));
+    ASSERT_TRUE(test(12, 'I', "12"));
+    ASSERT_TRUE(test(13, 'I', "1"));
+    ASSERT_TRUE(test(14, 'I', "2"));
+    ASSERT_TRUE(test(15, 'I', "3"));
+    ASSERT_TRUE(test(16, 'I', "4"));
+    ASSERT_TRUE(test(17, 'I', "5"));
+    ASSERT_TRUE(test(18, 'I', "6"));
+    ASSERT_TRUE(test(19, 'I', "7"));
+    ASSERT_TRUE(test(20, 'I', "8"));
+    ASSERT_TRUE(test(21, 'I', "9"));
+    ASSERT_TRUE(test(22, 'I', "10"));
+    ASSERT_TRUE(test(23, 'I', "11"));
 }
 
 
 TEST(Generate, GetLocaleText_Minute) {
     
-    auto test = [](int minute, const String& expected) {
+    auto test = [](int minute, const std::string& expected) {
         Locale locale;
         locale.get_minute = [](int minute) {
             return ToString(minute);
         };
         auto tm = MakeTm(2018, 5, 5, 23, minute, 0);
-        String locale_text;
+        std::string locale_text;
         bool has_got = GetLocaleText('M', tm, locale, locale_text);
         if (! has_got) {
             return false;
@@ -511,13 +511,13 @@ TEST(Generate, GetLocaleText_Minute) {
 
 TEST(Generate, GetLocaleText_Second) {
     
-    auto test = [](int second, const String& expected) {
+    auto test = [](int second, const std::string& expected) {
         Locale locale;
         locale.get_second = [](int second) {
             return ToString(second);
         };
         auto tm = MakeTm(2018, 5, 5, 23, 13, second);
-        String locale_text;
+        std::string locale_text;
         bool has_got = GetLocaleText('S', tm, locale, locale_text);
         if (! has_got) {
             return false;
@@ -533,10 +533,10 @@ TEST(Generate, GetLocaleText_Second) {
 
 TEST(Generate, GetLocaleText_NoLocale) {
     
-    auto test = [](Char specifier_char) {
+    auto test = [](char specifier_char) {
         
         auto tm = MakeTm(2018, 5, 5, 23, 06, 29);
-        String locale_text;
+        std::string locale_text;
         bool has_got = GetLocaleText(specifier_char, tm, Locale(), locale_text);
         if (has_got) {
             return false;
@@ -552,12 +552,12 @@ TEST(Generate, GetLocaleText_NoLocale) {
 
 TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
     
-    auto test = [](Char specifier_char) {
+    auto test = [](char specifier_char) {
         
         auto locale = GetFullLocale();
         
         auto tm = MakeTm(2018, 3, 16, 13, 40, 22);
-        String locale_text;
+        std::string locale_text;
         bool has_got = GetLocaleText(specifier_char, tm, locale, locale_text);
         if (has_got) {
             return false;
@@ -566,9 +566,9 @@ TEST(Generate, GetLocaleText_UnsupportedSpecifier) {
     };
     
     auto supported_chars = GetOverridableSpecifiers();
-    for (int ch = std::numeric_limits<Char>::min(); ch <= std::numeric_limits<Char>::max(); ++ch) {
-        if (supported_chars.find(static_cast<Char>(ch)) == supported_chars.end()) {
-            ASSERT_TRUE(test(static_cast<Char>(ch)));
+    for (int ch = std::numeric_limits<char>::min(); ch <= std::numeric_limits<char>::max(); ++ch) {
+        if (supported_chars.find(static_cast<char>(ch)) == supported_chars.end()) {
+            ASSERT_TRUE(test(static_cast<char>(ch)));
         }
     }
 }
@@ -579,15 +579,15 @@ TEST(Generate, OverrideStandardSpecifiers_Normal) {
     auto tm = MakeTm(2018, 3, 18, 22, 23, 49);
     auto locale = GetFullLocale();
     
-    auto result_text = TIEX_STRING("Override locale %A%a%p%b%h%B%m ");
+    std::string result_text = "Override locale %A%a%p%b%h%B%m ";
     bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_TRUE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("Override locale weekdayweekdayampmmonthmonthmonthmonth "));
+    ASSERT_EQ(result_text, "Override locale weekdayweekdayampmmonthmonthmonthmonth ");
     
-    result_text = TIEX_STRING("Override %Z locale %A%a%p%b%h%B%m ");
+    result_text = "Override %Z locale %A%a%p%b%h%B%m ";
     overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_FALSE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("Override %Z locale weekdayweekdayampmmonthmonthmonthmonth "));
+    ASSERT_EQ(result_text, "Override %Z locale weekdayweekdayampmmonthmonthmonthmonth ");
 }
 
 
@@ -596,20 +596,20 @@ TEST(Generate, OverrideStandardSpecifiers_EscapePercent) {
     auto tm = MakeTm(2018, 3, 18, 22, 30, 1);
     auto locale = GetFullLocale();
 
-    auto result_text = TIEX_STRING("Escape%% %%p %%M %a");
+    std::string result_text = "Escape%% %%p %%M %a";
     bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_TRUE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("Escape%% %%p %%M weekday"));
+    ASSERT_EQ(result_text, "Escape%% %%p %%M weekday");
 }
 
 
 TEST(Generate, OverrideStandardSpecifiers_NoLocale) {
     
     auto tm = MakeTm(2018, 3, 18, 21, 58, 44);
-    auto result_text = TIEX_STRING("%p %a %A %b %h %B %m");
+	std::string result_text = "%p %a %A %b %h %B %m";
     bool overrode_all = OverrideStandardSpecifiers(tm, Locale(), result_text);
     ASSERT_FALSE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("%p %a %A %b %h %B %m"));
+    ASSERT_EQ(result_text, "%p %a %A %b %h %B %m");
 }
 
 
@@ -618,8 +618,8 @@ TEST(Generate, OverrideStandardSpecifiers_PercentAtTail) {
     auto tm = MakeTm(2018, 3, 18, 22, 20, 0);
     auto locale = GetFullLocale();
     
-    auto result_text = TIEX_STRING("Result text %");
+	std::string result_text = "Result text %";
     bool overrode_all = OverrideStandardSpecifiers(tm, locale, result_text);
     ASSERT_TRUE(overrode_all);
-    ASSERT_EQ(result_text, TIEX_STRING("Result text %"));
+    ASSERT_EQ(result_text, "Result text %");
 }
