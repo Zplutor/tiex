@@ -10,9 +10,7 @@
 		B7387704200F121C003A22B5 /* scanner_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7387703200F121C003A22B5 /* scanner_test.cpp */; };
 		B7387714200F126F003A22B5 /* gtest_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = B738770A200F126F003A22B5 /* gtest_main.cc */; };
 		B7387719200F126F003A22B5 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = B738770F200F126F003A22B5 /* gtest-all.cc */; };
-		B738771F200F1738003A22B5 /* tiex_scanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B738771E200F1738003A22B5 /* tiex_scanner.cpp */; };
 		B7387724200F1C3A003A22B5 /* tiex_formatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7387723200F1C3A003A22B5 /* tiex_formatter.cpp */; };
-		B7387727200F1D62003A22B5 /* tiex_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7387725200F1D62003A22B5 /* tiex_parser.cpp */; };
 		B738772A200FA250003A22B5 /* parser_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7387729200FA250003A22B5 /* parser_test.cpp */; };
 		B7AEC5952016F8E20019158D /* tiex_match.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7AEC5932016F8E20019158D /* tiex_match.cpp */; };
 		B7AEC5972016FD4C0019158D /* match_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7AEC5962016FD4C0019158D /* match_test.cpp */; };
@@ -39,12 +37,9 @@
 		B738770A200F126F003A22B5 /* gtest_main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gtest_main.cc; path = ../test/googletest/src/gtest_main.cc; sourceTree = "<group>"; };
 		B738770F200F126F003A22B5 /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "gtest-all.cc"; path = "../test/googletest/src/gtest-all.cc"; sourceTree = "<group>"; };
 		B738771D200F1727003A22B5 /* tiex_scanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tiex_scanner.h; path = ../src/tiex_scanner.h; sourceTree = "<group>"; };
-		B738771E200F1738003A22B5 /* tiex_scanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tiex_scanner.cpp; path = ../src/tiex_scanner.cpp; sourceTree = "<group>"; };
-		B7387720200F1AFE003A22B5 /* tiex_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tiex_config.h; path = ../src/tiex_config.h; sourceTree = "<group>"; };
 		B7387721200F1B7F003A22B5 /* tiex_expression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tiex_expression.h; path = ../src/tiex_expression.h; sourceTree = "<group>"; };
 		B7387722200F1BEF003A22B5 /* tiex_formatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tiex_formatter.h; path = ../src/tiex_formatter.h; sourceTree = "<group>"; };
 		B7387723200F1C3A003A22B5 /* tiex_formatter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tiex_formatter.cpp; path = ../src/tiex_formatter.cpp; sourceTree = "<group>"; };
-		B7387725200F1D62003A22B5 /* tiex_parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tiex_parser.cpp; path = ../src/tiex_parser.cpp; sourceTree = "<group>"; };
 		B7387726200F1D62003A22B5 /* tiex_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tiex_parser.h; path = ../src/tiex_parser.h; sourceTree = "<group>"; };
 		B7387728200F1ED4003A22B5 /* tiex_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tiex_error.h; path = ../src/tiex_error.h; sourceTree = "<group>"; };
 		B7387729200FA250003A22B5 /* parser_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = parser_test.cpp; path = ../test/parser_test.cpp; sourceTree = "<group>"; };
@@ -74,16 +69,13 @@
 			isa = PBXGroup;
 			children = (
 				B73876FF200F11DE003A22B5 /* tiex.h */,
-				B7387720200F1AFE003A22B5 /* tiex_config.h */,
 				B7387721200F1B7F003A22B5 /* tiex_expression.h */,
 				B7387728200F1ED4003A22B5 /* tiex_error.h */,
 				2314508E2059378A00A05CD3 /* tiex_locale.h */,
 				B7387722200F1BEF003A22B5 /* tiex_formatter.h */,
 				B7387723200F1C3A003A22B5 /* tiex_formatter.cpp */,
 				B738771D200F1727003A22B5 /* tiex_scanner.h */,
-				B738771E200F1738003A22B5 /* tiex_scanner.cpp */,
 				B7387726200F1D62003A22B5 /* tiex_parser.h */,
-				B7387725200F1D62003A22B5 /* tiex_parser.cpp */,
 				B7CE8AD4201EF01900423109 /* tiex_time.h */,
 				B7AEC5942016F8E20019158D /* tiex_match.h */,
 				B7AEC5932016F8E20019158D /* tiex_match.cpp */,
@@ -200,12 +192,10 @@
 				B7387704200F121C003A22B5 /* scanner_test.cpp in Sources */,
 				B7387724200F1C3A003A22B5 /* tiex_formatter.cpp in Sources */,
 				B7387714200F126F003A22B5 /* gtest_main.cc in Sources */,
-				B738771F200F1738003A22B5 /* tiex_scanner.cpp in Sources */,
 				B7CE8AD720218FB400423109 /* generate_test.cpp in Sources */,
 				B7387719200F126F003A22B5 /* gtest-all.cc in Sources */,
 				B7AEC5952016F8E20019158D /* tiex_match.cpp in Sources */,
 				B7CE8AD2201EE35A00423109 /* tiex_generate.cpp in Sources */,
-				B7387727200F1D62003A22B5 /* tiex_parser.cpp in Sources */,
 				B738772A200FA250003A22B5 /* parser_test.cpp in Sources */,
 				B7AEC5972016FD4C0019158D /* match_test.cpp in Sources */,
 			);

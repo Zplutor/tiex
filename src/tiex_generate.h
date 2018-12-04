@@ -56,7 +56,7 @@ bool GetLocaleText(
 		(specifier_char == 'I')) {
 		if (locale.get_hour != nullptr) {
 
-			BasicLocale<C>::HourOptions options;
+			typename BasicLocale<C>::HourOptions options;
 			int hour = formatted_tm.tm_hour;
 
 			if (specifier_char == 'I') {
@@ -88,7 +88,7 @@ bool GetLocaleText(
 		(specifier_char == 'A')) {
 		if (locale.get_weekday != nullptr) {
 
-			BasicLocale<C>::WeekdayOptions options;
+			typename BasicLocale<C>::WeekdayOptions options;
 			options.is_abbreviated = (specifier_char == 'a');
 			locale_text = locale.get_weekday(formatted_tm.tm_wday, options);
 			return true;
@@ -101,7 +101,7 @@ bool GetLocaleText(
 		(specifier_char == 'm')) {
 		if (locale.get_month != nullptr) {
 
-			BasicLocale<C>::MonthOptions options;
+			typename BasicLocale<C>::MonthOptions options;
 			if (specifier_char == 'm') {
 				options.is_number = true;
 			}
