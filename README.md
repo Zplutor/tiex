@@ -41,5 +41,4 @@ std::cout << formatter.Format(referenced_time, target_time) << std::endl;  //Out
 ## More Information
 * [Syntax](https://github.com/Zplutor/tiex/wiki/Syntax) of the expression.
 * [How to Import](https://github.com/Zplutor/tiex/wiki/How-to-Import) tiex into your projects.
-* The choice between [Char and Wide Char](https://github.com/Zplutor/tiex/wiki/Char-and-Wide-Char).
 * How to use [Custom Localization](https://github.com/Zplutor/tiex/wiki/Custom-Localization).
