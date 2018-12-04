@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\tiex_parser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\tiex_generate.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -25,9 +22,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\tiex_match.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tiex_scanner.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\test\parser_test.cpp">
@@ -56,9 +50,6 @@
     <ClInclude Include="..\src\tiex_generate.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\tiex_time.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\tiex_match.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -74,9 +65,6 @@
     <ClInclude Include="..\src\tiex_parser.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\tiex_config.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\tiex.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -87,6 +75,9 @@
       <Filter>test</Filter>
     </ClInclude>
     <ClInclude Include="..\src\tiex_locale.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_time.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
