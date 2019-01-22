@@ -4,11 +4,11 @@
 namespace tiex {
 namespace internal {
     
-long GetDifferenceWithTimet(const Specifier& specifier, std::time_t referenced_time, std::time_t formatted_time) {
+long GetDifferenceWithTimet(Unit unit, std::time_t referenced_time, std::time_t formatted_time) {
     
     long difference = static_cast<long>(formatted_time - referenced_time);
     
-    switch (specifier.uint) {
+    switch (unit) {
             
         case Unit::Week:
             difference /= 7;
@@ -35,7 +35,7 @@ long GetDifferenceWithTimet(const Specifier& specifier, std::time_t referenced_t
 }
     
     
-long GetDifferenceWithTm(const Specifier& specifier, const std::tm& referenced_tm, const std::tm& formatted_tm) {
+long GetDifferenceWithTm(Unit unit, const std::tm& referenced_tm, const std::tm& formatted_tm) {
     
     auto compare_tm = [](const std::tm& tm1, const std::tm& tm2, bool compare_month) {
         
@@ -70,7 +70,7 @@ long GetDifferenceWithTm(const Specifier& specifier, const std::tm& referenced_t
     long difference = 0;
     long adjustment = 0;
     
-    switch (specifier.uint) {
+    switch (unit) {
             
         case Unit::Month:
             difference = formatted_tm.tm_year - referenced_tm.tm_year;
@@ -104,12 +104,12 @@ long GetDifferenceWithTm(const Specifier& specifier, const std::tm& referenced_t
     
  
 bool GetTimeDifference(
-    const Specifier& specifier,
+    Unit unit,
     const Time& reference_time,
     const Time& formatted_time,
     long& difference) {
     
-    switch (specifier.uint) {
+    switch (unit) {
             
         case Unit::Month:
         case Unit::Year: {
@@ -124,12 +124,12 @@ bool GetTimeDifference(
                 return false;
             }
             
-            difference = GetDifferenceWithTm(specifier, *referenced_tm, *formatted_tm);
+            difference = GetDifferenceWithTm(unit, *referenced_tm, *formatted_tm);
             return true;
         }
             
         default:
-            difference = GetDifferenceWithTimet(specifier, reference_time.GetTimet(), formatted_time.GetTimet());
+            difference = GetDifferenceWithTimet(unit, reference_time.GetTimet(), formatted_time.GetTimet());
             return true;
     }
 }

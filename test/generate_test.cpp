@@ -5,19 +5,6 @@
 using namespace tiex;
 using namespace tiex::internal;
 
-static long GetDifferenceWithTimet(Unit unit, std::time_t referenced, std::time_t formatted) {
-    Specifier specifier;
-    specifier.uint = unit;
-    return GetDifferenceWithTimet(specifier, referenced, formatted);
-}
-
-
-static long GetDifferenceWithTm(Unit unit, const std::tm& referenced, const std::tm& formatted) {
-    Specifier specifer;
-    specifer.uint = unit;
-    return GetDifferenceWithTm(specifer, referenced, formatted);
-}
-
 
 static std::string ToString(int value) {
 #if TIEX_USE_WCHAR

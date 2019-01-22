@@ -10,9 +10,9 @@
 namespace tiex {
 namespace internal {
 
-long GetDifferenceWithTimet(const Specifier& specifier, std::time_t referenced_time, std::time_t formatted_time);
-long GetDifferenceWithTm(const Specifier& specifier, const std::tm& referenced_tm, const std::tm& formatted_tm);
-bool GetTimeDifference(const Specifier& specifier, const Time& reference_time, const Time& formatted_time, long& difference);
+long GetDifferenceWithTimet(Unit unit, std::time_t referenced_time, std::time_t formatted_time);
+long GetDifferenceWithTm(Unit unit, const std::tm& referenced_tm, const std::tm& formatted_tm);
+bool GetTimeDifference(Unit unit, const Time& reference_time, const Time& formatted_time, long& difference);
     
 template<typename C>
 std::basic_string<C> ToString(int value);
@@ -179,7 +179,7 @@ bool GenerateResultText(
 			if (iterator != result.specifiers.end()) {
 
 				long difference = 0;
-				bool is_succeeded = GetTimeDifference(iterator->second, reference_time, formatted_time, difference);
+				bool is_succeeded = GetTimeDifference(iterator->second.unit, reference_time, formatted_time, difference);
 				if (!is_succeeded) {
 					return false;
 				}

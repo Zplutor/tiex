@@ -45,6 +45,9 @@
     <ClCompile Include="..\test\case_test.cpp">
       <Filter>test</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\tiex_difference.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\tiex_generate.h">
@@ -78,6 +81,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\tiex_time.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_unit.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiex_difference.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

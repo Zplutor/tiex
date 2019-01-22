@@ -269,7 +269,7 @@ public:
 					texts.push_back({});
 
 					Specifier specifier;
-					specifier.uint = unit;
+					specifier.unit = unit;
 					specifiers[specifier_index] = specifier;
 				}
 				else {

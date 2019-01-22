@@ -474,7 +474,7 @@ TEST(Parser, ParseResult_HasSpecifier) {
             if (iterator == expected_specifer_units.end()) {
                 return false;
             }
-            if (iterator->second != each_specifier.second.uint) {
+            if (iterator->second != each_specifier.second.unit) {
                 return false;
             }
         }

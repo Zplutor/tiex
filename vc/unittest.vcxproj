@@ -79,6 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\tiex_difference.cpp" />
     <ClCompile Include="..\src\tiex_formatter.cpp" />
     <ClCompile Include="..\src\tiex_generate.cpp" />
     <ClCompile Include="..\src\tiex_match.cpp" />
@@ -92,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\tiex.h" />
+    <ClInclude Include="..\src\tiex_difference.h" />
     <ClInclude Include="..\src\tiex_error.h" />
     <ClInclude Include="..\src\tiex_expression.h" />
     <ClInclude Include="..\src\tiex_formatter.h" />
@@ -101,6 +103,7 @@
     <ClInclude Include="..\src\tiex_parser.h" />
     <ClInclude Include="..\src\tiex_scanner.h" />
     <ClInclude Include="..\src\tiex_time.h" />
+    <ClInclude Include="..\src\tiex_unit.h" />
     <ClInclude Include="..\test\test_utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,19 +3,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "tiex_unit.h"
 
 namespace tiex {
-
-enum class Unit {
-    Second,
-    Minute,
-    Hour,
-    Day,
-    Week,
-    Month,
-    Year,
-};
-
     
 class Boundary {
 public:
@@ -34,7 +24,7 @@ public:
 
 class Specifier {
 public:
-    Unit uint = Unit::Second;
+    Unit unit = Unit::Second;
 };
 
 
